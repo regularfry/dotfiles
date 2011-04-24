@@ -1,0 +1,14 @@
+DOTFILES
+
+These are my dotfiles.
+
+Run:
+
+    /bin/bash ./setup.sh
+
+to symlink everything here into the right place. Things won't get
+overwritten, so you might want to:
+
+    rm ~/.bashrc
+
+beforehand.
