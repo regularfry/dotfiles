@@ -1,0 +1,11 @@
+[extensions]
+hgk=
+keyword=
+hgext.convert=
+hgext.fetch=
+hgext.mq=
+hgext.churn=
+hgext.graphlog=
+
+[ui]
+username = Alex Young <alex@bytemark.co.uk>

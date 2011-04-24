@@ -1,0 +1,17 @@
+# -*- mode: snippet -*-
+# name: testcase
+# key: tc
+# --
+class Test${1:ClassName} < Test::Unit::TestCase
+  
+  ${2:include }
+
+  def setup
+  end
+
+  
+  def test_${3:name}
+    $0
+  end
+
+end # class Test$1

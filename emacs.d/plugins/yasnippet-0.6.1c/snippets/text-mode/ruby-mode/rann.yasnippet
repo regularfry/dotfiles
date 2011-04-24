@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: raise ArgumentError
+# key: rann
+# --
+raise ArgumentError.new("${1:param_name} cannot be nil!") if $1.nil?
