@@ -3,7 +3,7 @@ export ZSH=$HOME/.oh-my-zsh
 
 # Set to the name theme to load.
 # Look in ~/.oh-my-zsh/themes/
-export ZSH_THEME="dst"
+export ZSH_THEME="regularfry"
 
 # Set to this to use case-sensitive completion
 # export CASE_SENSITIVE="true"
