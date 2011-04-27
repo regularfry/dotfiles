@@ -3,7 +3,7 @@ export ZSH=$HOME/.oh-my-zsh
 
 # Set to the name theme to load.
 # Look in ~/.oh-my-zsh/themes/
-export ZSH_THEME="dst"
+export ZSH_THEME="regularfry"
 
 # Set to this to use case-sensitive completion
 # export CASE_SENSITIVE="true"
@@ -25,6 +25,7 @@ alias screen='echo $SSH_AUTH_SOCK > ~/.ssh_auth_sock && screen'
 alias sync_ssh='export SSH_AUTH_SOCK=`cat ~/.ssh_auth_sock`'
 alias ec="emacsclient -n"
 alias rtest="ruby -Ilib:tests/unit -rpp -rubygems"
+alias openvpn="sudo /etc/init.d/openvpn"
 
 export EDITOR=vim
 
