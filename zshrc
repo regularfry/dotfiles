@@ -21,15 +21,19 @@ plugins=(git)
 source $ZSH/oh-my-zsh.sh
 # Customize to your needs...
 
+#export LC_CTYPE=en_GB.UTF-8
+export LC_CTYPE=
+
 alias screen='echo $SSH_AUTH_SOCK > ~/.ssh_auth_sock && screen'
 alias sync_ssh='export SSH_AUTH_SOCK=`cat ~/.ssh_auth_sock`'
-alias ec="emacsclient -n"
-alias rtest="ruby -Ilib:tests/unit -rpp -rubygems"
+#alias ec="emacsclient -n"
+alias rtest="ruby -I.:lib:upstream/lib:tests/unit -rpp -rubygems"
 alias openvpn="sudo /etc/init.d/openvpn"
 
 export EDITOR=vim
 
 export CHICKEN_BIN=$HOME/.chicken/bin
+export CLJR_BIN=/home/zander/.cljr/bin
 
-export PATH=$CHICKEN_BIN:$HOME/bin:$HOME/.gem/ruby/1.8/bin:$PATH
+export PATH=$CLJR_BIN:$CHICKEN_BIN:$HOME/bin:$HOME/.gem/ruby/1.8/bin:$PATH
 source $HOME/.rvm/scripts/rvm
