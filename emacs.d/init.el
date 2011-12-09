@@ -8,12 +8,33 @@
 (ido-mode t)
 
 ;; filename matching
-(add-to-list 'auto-mode-alist '("^[rR]akefile\\'" . ruby-mode))
+(add-to-list 'auto-mode-alist '("[rR]akefile" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.gemspec\\'" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("^Gemfile\\'" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.rake\\'" . ruby-mode))
 
+
+
+(defun make-variable ()
+   (let ((var-name (read-string "Variable name: ")))
+     
+     (kill-append " = " t)
+     (kill-append var-name t)
+     (insert-string var-name)
+     (end-of-line 0)
+     (newline-and-indent)
+     (yank)))
+
+(defun extract-region-to-variable ()
+   (interactive)
+   (kill-region (region-beginning) (region-end))
+   (make-variable))
+
+(defun extract-sexp-to-variable ()
+  (interactive)
+  (kill-sexp)
+  (make-variable))
 
 
 
@@ -44,7 +65,6 @@
 
 
 
-
 ; make f12 edit this file
 (defun edit-init-el ()
   (interactive)
@@ -58,6 +78,10 @@
 (global-set-key [?\C->] 'increase-left-margin)
 (global-set-key [?\C-<] 'decrease-left-margin)
 
+
+(require 'color-theme)
+(color-theme-initialize)
+(color-theme-calm-forest)
 
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
