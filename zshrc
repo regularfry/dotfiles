@@ -5,6 +5,8 @@ export ZSH=$HOME/.oh-my-zsh
 # Look in ~/.oh-my-zsh/themes/
 export ZSH_THEME="regularfry"
 
+
+
 # Set to this to use case-sensitive completion
 # export CASE_SENSITIVE="true"
 
@@ -21,6 +23,7 @@ plugins=(git)
 source $ZSH/oh-my-zsh.sh
 # Customize to your needs...
 
+setopt clobber
 #export LC_CTYPE=en_GB.UTF-8
 export LC_CTYPE=
 
@@ -33,7 +36,14 @@ alias openvpn="sudo /etc/init.d/openvpn"
 export EDITOR=vim
 
 export CHICKEN_BIN=$HOME/.chicken/bin
+export CABAL_BIN=$HOME/.cabal/bin
 export CLJR_BIN=/home/zander/.cljr/bin
 
-export PATH=$CLJR_BIN:$CHICKEN_BIN:$HOME/bin:$HOME/.gem/ruby/1.8/bin:$PATH
+export PATH=$CLJR_BIN:$CHICKEN_BIN:$HOME/bin:$HOME/.gem/ruby/1.8/bin:$CABAL_BIN:$PATH
 source $HOME/.rvm/scripts/rvm
+
+if [ -e $SSH_AUTH_SOCK ]; then
+  if ! ssh-add -L > /dev/null; then
+    ssh-add
+  fi
+fi
