@@ -71,12 +71,28 @@
   (find-file "~/.emacs.d/init.el"))
 (global-set-key [f12] 'edit-init-el)
 
+
+(defun swap-buffer-windows ()
+  (interactive)
+  (next-multiframe-window)
+  (let ((bufa (current-buffer)))
+    (previous-multiframe-window)
+    (let ((bufb (current-buffer)))
+      (switch-to-buffer bufa)
+      (next-multiframe-window)
+      (switch-to-buffer bufb))))
+
 ; Set C-pgup and C-pgdn to sane functions
 (global-set-key [C-next] 'next-multiframe-window)
 (global-set-key [C-prior] 'previous-multiframe-window)
+(global-set-key [C-S-prior] 'swap-buffer-windows)
+(global-set-key [C-S-next] 'swap-buffer-windows)
 
 (global-set-key [?\C->] 'increase-left-margin)
 (global-set-key [?\C-<] 'decrease-left-margin)
+
+; Set to hippie-expand by default
+(global-set-key (kbd "M-/") 'hippie-expand)
 
 
 (require 'color-theme)
