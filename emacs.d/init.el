@@ -1,6 +1,7 @@
 (setq-default transient-mark-mode t)
 (setq x-select-enable-clipboard t)
 (setq inhibit-startup-message t)
+(fset 'yes-or-no-p 'y-or-n-p)
 (show-paren-mode t)
 (tool-bar-mode nil)
 (menu-bar-mode nil)
@@ -17,8 +18,7 @@
 
 
 (defun make-variable ()
-   (let ((var-name (read-string "Variable name: ")))
-     
+   (let ((var-name (read-string "Variable name: ")))     
      (kill-append " = " t)
      (kill-append var-name t)
      (insert-string var-name)
