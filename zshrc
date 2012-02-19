@@ -25,6 +25,7 @@ alias screen='echo $SSH_AUTH_SOCK > ~/.ssh_auth_sock && screen'
 alias sync_ssh='export SSH_AUTH_SOCK=`cat ~/.ssh_auth_sock`'
 alias ec="emacsclient -n"
 alias rtest="ruby -Ilib:tests/unit -rpp -rubygems"
+alias trails="ruby -I.:lib:test -rpp -rubygems"
 alias openvpn="sudo /etc/init.d/openvpn"
 
 export EDITOR=vim
