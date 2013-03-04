@@ -88,8 +88,7 @@ fi
 bind '"\e[A"':history-search-backward
 bind '"\e[B"':history-search-forward
 
-GEM_HOME=/home/zander/.gem/ruby/1.8/
-export PATH=$PATH:$GEM_HOME/bin:$HOME/bin
+export PATH=$PATH:$HOME/bin
 alias screen='echo $SSH_AUTH_SOCK > ~/.ssh_auth_sock && screen'
 alias sync_ssh='export SSH_AUTH_SOCK=`cat ~/.ssh_auth_sock`'
 
@@ -100,4 +99,3 @@ if [ -f /etc/bash_completion ]; then
     . /etc/bash_completion
 fi
 
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*

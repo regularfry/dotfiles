@@ -39,8 +39,7 @@ export CHICKEN_BIN=$HOME/.chicken/bin
 export CABAL_BIN=$HOME/.cabal/bin
 export CLJR_BIN=/home/zander/.cljr/bin
 
-export PATH=$CLJR_BIN:$CHICKEN_BIN:$HOME/bin:$HOME/.gem/ruby/1.8/bin:$CABAL_BIN:$PATH
-source $HOME/.rvm/scripts/rvm
+export PATH=$CLJR_BIN:$CHICKEN_BIN:$HOME/bin:$CABAL_BIN:$PATH
 
 if [ -e $SSH_AUTH_SOCK ]; then
   if ! ssh-add -L > /dev/null; then
