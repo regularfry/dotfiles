@@ -8,6 +8,13 @@
 (server-start)
 (ido-mode t)
 
+
+(require 'uniquify)
+(setq
+  uniquify-buffer-name-style 'forward
+  uniquify-separator ":")
+
+
 ;; filename matching
 (add-to-list 'auto-mode-alist '("[rR]akefile" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.gemspec\\'" . ruby-mode))
@@ -15,6 +22,11 @@
 (add-to-list 'auto-mode-alist '("^Gemfile\\'" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.rake\\'" . ruby-mode))
 
+
+(add-hook 'ruby-mode-hook
+          (lambda ()
+            (add-to-list 'write-file-functions
+                         'delete-trailing-whitespace)))
 
 
 (defun make-variable ()
@@ -38,18 +50,6 @@
 
 
 
-;; set up for slime (obsolete, replace)
-(add-to-list 'load-path "~/.emacs.d/slime")
-(eval-after-load "slime" 
-  '(progn (slime-setup '(slime-repl))))
-(require 'slime)
-(slime-setup)
-
-
-;; set up for clojure-mode (obsolete, replace)
-(add-to-list 'load-path "/home/zander/.emacs.d/clojure-mode")
-(require 'clojure-mode)
-
 (defun lisp-enable-paredit-hook ()
   (paredit-mode 1))
 (add-hook 'clojure-mode-hook 'lisp-enable-paredit-hook)
@@ -63,6 +63,24 @@
 (yas/load-directory "~/.emacs.d/plugins/yasnippet-0.6.1c/snippets")
 
 
+;; Set up marmalade
+(add-to-list 'load-path
+	     "~/.emacs.d/plugins/package")
+(require 'package)
+(add-to-list 'package-archives 
+    '("marmalade" .
+      "http://marmalade-repo.org/packages/"))
+(package-initialize)
+
+
+(defun make-journal-entry ()
+  (interactive)
+  (let ((filename
+         (apply 'format "%d-%d-%d_%d:%d:%d.md"
+                (cdddr (reverse (decode-time))))))
+    (switch-to-buffer
+     (find-file (concat "/ssh:alex@81.187.127.205:journal/" filename)))))
+(global-set-key [f9] 'make-journal-entry)
 
 
 ; make f12 edit this file
@@ -70,6 +88,10 @@
   (interactive)
   (find-file "~/.emacs.d/init.el"))
 (global-set-key [f12] 'edit-init-el)
+
+; C-? reverts the buffer.  Logic is that C-/ is undo, so C-S-/ is
+; more-undo.
+(global-set-key (kbd "C-?") 'revert-buffer)
 
 
 (defun swap-buffer-windows ()
@@ -93,6 +115,13 @@
 
 ; Set to hippie-expand by default
 (global-set-key (kbd "M-/") 'hippie-expand)
+
+
+; Handy binding
+(global-set-key (kbd "C-c a =")
+                (lambda () (interactive)
+                  (align-regexp (region-beginning) (region-end) "\\(\\s-*\\)=" 1 1 nil)))
+(global-set-key (kbd "M-=") 'align-regexp)
 
 
 (require 'color-theme)
