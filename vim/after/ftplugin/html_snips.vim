@@ -9,6 +9,11 @@ let g:loaded_snips_html = 1
 
 let c = &ft == 'xhtml' ? ' /' : ''
 
+if exists('g:loaded_snips_xhtml')
+  fini
+end
+let g:loaded_snips_xhtml = 1
+
 " Some useful Unicode entities
 " Non-Breaking Space
 exe 'Snip nbs &nbsp;'

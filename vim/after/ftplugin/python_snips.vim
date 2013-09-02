@@ -2,6 +2,11 @@ if !exists('g:loaded_snips')
 	fini
 en
 
+if exists('g:loaded_snips_python')
+  fini
+end
+let g:loaded_snips_python = 1
+
 " New Class
 exe "Snip cl class ${1:ClassName}(${2:object}):\n\t\"\"\"${3:docstring for $1}\"\"\"\n\tdef __init__(self, ${4:arg}):\n\t\t${5:super($1, self).__init__()}\n\t\tself.$4 = $4\n\t\t${6}"
 " New Function
@@ -25,3 +30,4 @@ exe "Snip tryef try:\n\t${1:pass}\nexcept ${2:Exception}, ${3:e}:\n\t${4:raise $
 exe "Snip ifmain if __name__ == '__main__':\n\t${1:main()}"
 " __magic__
 exe 'Snip _ __${1:init}__${2}'
+exe "Snip init def __init__(self${1}):\n\t${2}"

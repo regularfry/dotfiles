@@ -61,3 +61,9 @@ set incsearch
 set showmatch
 match ErrorMsg '\%>72v.\+'
 set vb
+set undodir=$HOME/.vim/undo
+set undolevels=1000
+set undoreload=10000
+set clipboard=unnamedplus
+set scrolloff=3
+set autoread

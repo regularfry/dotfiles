@@ -1,26 +1,30 @@
+(setq indent-line-function 'insert-tab)
 (setq-default transient-mark-mode t)
 (setq-default indent-tabs-mode nil)
 (setq x-select-enable-clipboard t)
+(defalias 'yes-or-no-p 'y-or-n-p)
 (setq inhibit-startup-message t)
 (fset 'yes-or-no-p 'y-or-n-p)
+(setq-default tab-width 2)
+(setq js-indent-level 2)
 (show-paren-mode t)
 (tool-bar-mode nil)
 (menu-bar-mode nil)
 (server-start)
 (ido-mode t)
 
-
 (require 'uniquify)
 (setq
   uniquify-buffer-name-style 'forward
   uniquify-separator ":")
 
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 ;; filename matching
-(add-to-list 'auto-mode-alist '("[rR]akefile" . ruby-mode))
+(add-to-list 'auto-mode-alist '("[rR]akefile\\'" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.gemspec\\'" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
-(add-to-list 'auto-mode-alist '("^Gemfile\\'" . ruby-mode))
+(add-to-list 'auto-mode-alist '("Gemfile\\'" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.rake\\'" . ruby-mode))
 
 
@@ -48,7 +52,34 @@
   (interactive)
   (kill-sexp)
   (make-variable))
+;;; This was installed by package-install.el.
+;;; This provides support for the package system and
+;;; interfacing with ELPA, the package archive.
+;;; Move this code earlier if you want to reference
+;;; packages in your .emacs.
+(when
+    (load
+     (expand-file-name "~/.emacs.d/elpa/package.el"))
+  (package-initialize))
+(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 
+
+(defun haml-extract-partial (name)
+  (interactive "MPartial name: ")
+  (write-region (region-beginning) (region-end)
+                (concat "_" name ".html.haml"))
+  (kill-region (region-beginning) (region-end))
+  (insert "=render :partial => \"" name "\"\n"))
+
+
+
+
+;; set up for slime (obsolete, replace)
+(add-to-list 'load-path "~/.emacs.d/slime")
+(eval-after-load "slime"
+  '(progn (slime-setup '(slime-repl))))
+(require 'slime)
+(slime-setup)
 
 
 (defun lisp-enable-paredit-hook ()
@@ -83,17 +114,16 @@
      (find-file (concat "/ssh:alex@81.187.127.205:journal/" filename)))))
 (global-set-key [f9] 'make-journal-entry)
 
+; C-? reverts the buffer.  Logic is that C-/ is undo, so C-S-/ is
+; more-undo.
+(global-set-key (kbd "C-?") 'revert-buffer)
+
 
 ; make f12 edit this file
 (defun edit-init-el ()
   (interactive)
   (find-file "~/.emacs.d/init.el"))
 (global-set-key [f12] 'edit-init-el)
-
-; C-? reverts the buffer.  Logic is that C-/ is undo, so C-S-/ is
-; more-undo.
-(global-set-key (kbd "C-?") 'revert-buffer)
-
 
 (defun swap-buffer-windows ()
   (interactive)
@@ -142,3 +172,6 @@
   ;; If there is more than one, they won't work right.
  '(default ((t (:inherit nil :stipple nil :background "gray12" :foreground "green" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 100 :width normal :foundry "unknown" :family "Inconsolata"))))
  '(minimap-font-face ((default (:height 20 :family "DejaVu Sans Mono")) (nil nil))))
+
+(color-theme-initialize)
+(color-theme-solarized-dark)

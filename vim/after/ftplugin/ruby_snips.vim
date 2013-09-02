@@ -114,7 +114,8 @@ exe 'Snip par partition { |${1:e}|, ${2} }'
 exe 'Snip rej reject { |${1:e}|, ${2} }'
 exe 'Snip sel select { |${1:e}|, ${2} }'
 exe 'Snip lam lambda { |${1:args}| ${2} }'
-exe "Snip do do |${1:variable}|\n\t${2}\nend"
+exe "Snip do do\n\t${1}\nend"
+exe "Snip do| do |${1:variable}|\n\t${2}\nend"
 exe 'Snip : :${1:key} => ${2:"value"}${3}'
 exe 'Snip ope open(${1:"path/or/url/or/pipe"}, "${2:w}") { |${3:io}| ${4} }'
 " path_from_here()
@@ -170,3 +171,4 @@ exe 'Snip sinc class << self; self end'
 exe "Snip nam namespace :${1:`Filename()`} do\n\t${2}\nend"
 exe "Snip tas desc \"${1:Task description\}\"\ntask :${2:task_name => [:dependent, :tasks]} do\n\t${3}\nend"
 exe "Snip rann raise ArgumentError.new(\"${1:param_name} cannot be nil!\") if ${1}.nil?"
+exe "Snip enc # encoding: utf-8\n\n${1}"
