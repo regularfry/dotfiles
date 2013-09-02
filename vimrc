@@ -60,3 +60,4 @@ nmap <silent> <F11> mzggVG!~/bin/xmpfilter.rb -a<cr>'z
 set incsearch
 set showmatch
 match ErrorMsg '\%>72v.\+'
+set vb
