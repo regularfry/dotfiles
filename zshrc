@@ -23,6 +23,8 @@ plugins=(git)
 source $ZSH/oh-my-zsh.sh
 # Customize to your needs...
 
+source /usr/local/share/chruby/chruby.sh
+
 setopt clobber
 #export LC_CTYPE=en_GB.UTF-8
 export LC_CTYPE=
