@@ -1,4 +1,5 @@
 (setq-default transient-mark-mode t)
+(setq-default indent-tabs-mode nil)
 (setq x-select-enable-clipboard t)
 (setq inhibit-startup-message t)
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -30,7 +31,7 @@
 
 
 (defun make-variable ()
-   (let ((var-name (read-string "Variable name: ")))     
+   (let ((var-name (read-string "Variable name: ")))
      (kill-append " = " t)
      (kill-append var-name t)
      (insert-string var-name)
@@ -67,7 +68,7 @@
 (add-to-list 'load-path
 	     "~/.emacs.d/plugins/package")
 (require 'package)
-(add-to-list 'package-archives 
+(add-to-list 'package-archives
     '("marmalade" .
       "http://marmalade-repo.org/packages/"))
 (package-initialize)
@@ -133,10 +134,11 @@
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
- )
+ '(global-rainbow-delimiters-mode t))
 (custom-set-faces
   ;; custom-set-faces was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :background "gray12" :foreground "green" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 100 :width normal :foundry "unknown" :family "Inconsolata")))))
+ '(default ((t (:inherit nil :stipple nil :background "gray12" :foreground "green" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 100 :width normal :foundry "unknown" :family "Inconsolata"))))
+ '(minimap-font-face ((default (:height 20 :family "DejaVu Sans Mono")) (nil nil))))
