@@ -2,3 +2,5 @@ emacs.d/auto-save-list
 emacs.d/tramp
 vim/.netrwhist
 *~
+emacs.d/elpa/
+emacs.d/url/
