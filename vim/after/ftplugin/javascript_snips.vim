@@ -2,6 +2,11 @@ if !exists('loaded_snips')
 	fini
 en
 
+if exists('g:loaded_snips_javascript')
+  fini
+end
+let g:loaded_snips_javascript = 1
+
 " Prototype
 exe "Snip proto ${1:class_name}.prototype.${2:method_name} =\nfunction(${3:first_argument}) {\n\t${4:// body...}\n};"
 " Function
@@ -34,3 +39,5 @@ exe 'Snip timeout setTimeout(function() {${3}}${2}, ${1:10};'
 exe "Snip get getElementsBy${1:TagName}('${2}')${3}"
 " Get Element
 exe "Snip gett getElementBy${1:Id}('${2}')${3}"
+" Log
+exe "Snip cl console.log(${1});"
