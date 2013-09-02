@@ -2,6 +2,11 @@ if !exists('g:loaded_snips')
 	fini
 en
 
+if exists('g:loaded_snips_c')
+  fini
+end
+let g:loaded_snips_c = 1
+"
 " main()
 exe "Snip main int main (int argc, char const* argv[])\n{\n\t${1}\n\treturn 0;\n}"
 " #include <...>

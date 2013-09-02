@@ -1,6 +1,12 @@
 if !exists('g:loaded_snips')
 	fini
 en
+
+if exists('g:loaded_snips_html')
+  fini
+end
+let g:loaded_snips_html = 1
+
 let c = &ft == 'xhtml' ? ' /' : ''
 
 " Some useful Unicode entities

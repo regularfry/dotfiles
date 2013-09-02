@@ -49,6 +49,7 @@ set viminfo='20,\"50
 set tags=tags;
 set ts=2
 set sw=2
+set tw=72
 set expandtab
 set nocompatible
 syntax on
@@ -59,3 +60,4 @@ nmap <silent> <F11> mzggVG!~/bin/xmpfilter.rb -a<cr>'z
 set incsearch
 set showmatch
 match ErrorMsg '\%>72v.\+'
+set vb
