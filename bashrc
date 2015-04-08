@@ -99,4 +99,10 @@ if [ -f /etc/bash_completion ]; then
     . /etc/bash_completion
 fi
 
-source /usr/share/chruby/chruby.sh
+if [ -e /usr/share/chruby/chruby.sh ]; then
+  source /usr/share/chruby/chruby.sh
+fi
+
+if [ -e /usr/local/share/chruby/chruby.sh ]; then
+  source /usr/local/share/chruby/chruby.sh
+fi
