@@ -21,49 +21,14 @@ export ZSH_THEME="regularfry"
 plugins=(git)
 
 source $ZSH/oh-my-zsh.sh
-# Customize to your needs...
-export LC_CTYPE=
 
 setopt clobber
-#export LC_CTYPE=en_GB.UTF-8
-export LC_CTYPE=
-
-alias screen='echo $SSH_AUTH_SOCK > ~/.ssh_auth_sock && screen'
-alias sync_ssh='export SSH_AUTH_SOCK=`cat ~/.ssh_auth_sock`'
-alias ec="emacsclient -n"
-alias rtest="ruby -I.:lib:tests/unit -rpp -rubygems"
-alias trails="ruby -I.:lib:test -rpp -rubygems"
-alias openvpn="sudo /etc/init.d/openvpn"
-alias be="bundle exec"
-alias ebe="env/bin/exec"
-
-export EDITOR=vim
-
-export CHICKEN_BIN=$HOME/.chicken/bin
-export CABAL_BIN=$HOME/.cabal/bin
-export CLJR_BIN=/home/zander/.cljr/bin
-
-export PATH=$CLJR_BIN:$CHICKEN_BIN:$HOME/bin:$CABAL_BIN:$PATH
-
-if [ -e $SSH_AUTH_SOCK ]; then
-  if ! ssh-add -L > /dev/null; then
-    ssh-add
-  fi
-fi
-
-export GOPATH=$HOME/go
-export GOROOT=/usr/local/go
-export GOPATHS=$GOPATH/bin:$GOROOT/bin
-export PATH=$CHICKEN_BIN:$HOME/bin:$HOME/.gem/ruby/1.8/bin:$GOPATHS:$PATH
-export DEBEMAIL=alex@blackkettle.org
-export DEBFULLNAME="Alex Young"
-#source $HOME/.rvm/scripts/rvm
-
-#PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+source $HOME/.shell
 
 function pyactivate(){
   source $1/bin/activate
   export PATH=$1/bin:$PATH
 }
 
-source /usr/share/chruby/chruby.sh
+# OPAM configuration
+. /home/alex/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
