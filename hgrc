@@ -6,6 +6,8 @@ hgext.fetch=
 hgext.mq=
 hgext.churn=
 hgext.graphlog=
+hgext.bookmarks=
+hgext.git=
 
 [ui]
 username = Alex Young <alex@bytemark.co.uk>
