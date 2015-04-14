@@ -1,0 +1,42 @@
+#!/usr/bin/env ruby
+
+fail "SSHPASS environment variable not set!" unless ENV['SSHPASS']
+install_user, hostname = ARGV.shift.split("@")
+user = ENV['USER']
+if !hostname || hostname.empty?
+  fail "username not specified - connection should be user@hostname"
+end
+short_hostname = if hostname =~ /^(.+)\.bytemark\.co\.uk/
+                   $1
+                 else
+                   nil
+                 end
+
+def xsys cmd
+  puts cmd
+  system cmd
+  fail "oops" unless $?.success?
+end
+
+ip = `dig +short #{hostname}`.split("\n").first
+ip = nil if ip && ip.empty?
+
+xsys "ssh-keygen -R #{ip}" if ip
+xsys "ssh-keygen -R #{hostname}"
+
+xsys "ssh-keyscan -H #{hostname} >> ~/.ssh/known_hosts"
+xsys "ssh-keyscan -H #{short_hostname} >> ~/.ssh/known_hosts" if
+  short_hostname
+
+ssh = "ssh #{install_user}@#{hostname}"
+xsys "sshpass -e ssh-copy-id #{install_user}@#{hostname}"
+sudo = install_user == "root" ? "" : "sudo"
+xsys "sshpass -e #{ssh} #{sudo} sed -i 's/PermitRootLogin.*/PermitRootLogin=without-password/' /etc/ssh/sshd_config"
+xsys "#{ssh} #{sudo} apt-get install python python-apt python-pycurl vim-scripts curl ca-certificates ruby sudo git realpath -yy --force-yes --quiet"
+home="/home/#{user}"
+xsys "echo 'if ! grep \"^#{user}:\" /etc/passwd > /dev/null; then useradd #{user} --groups sudo --create-home --shell /bin/bash && mkdir -p #{home}/.ssh; fi' | ssh -tA #{install_user}@#{hostname} #{sudo} /bin/sh -s"
+xsys "ssh-add -L | #{ssh} #{sudo} tee #{home}/.ssh/authorized_keys > /dev/null"
+xsys "#{ssh} #{sudo} chown #{user}: \"/home/#{user}/.ssh/*\""
+xsys "#{ssh} #{sudo} su -l #{user} '/bin/bash -c \"cd && if [ ! -e dotfiles ]; then git clone https://github.com/regularfry/dotfiles.git && cd dotfiles && ./setup.sh; fi\"'"
+xsys "#{ssh} -tA #{sudo} passwd #{user}"
+ 

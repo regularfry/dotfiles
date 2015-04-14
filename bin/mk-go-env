@@ -1,0 +1,14 @@
+#!/bin/bash
+
+
+mkdir -p go/{pkg,src,bin}
+cat > go/exec <<EXEC
+#!/bin/bash
+export GOPATH=\$(dirname \$(readlink -f \${0}))
+export PATH=\$PATH:\${GOPATH}/bin
+export VIRTUAL_ENV=\${GOPATH}
+exec \$SHELL \$@
+EXEC
+
+chmod +x go/exec
+

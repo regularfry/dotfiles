@@ -1,0 +1,10 @@
+#!/bin/bash
+
+parse_git_dirty () {
+  if [[ -n $(git status -s 2> /dev/null) ]]; then
+    echo -n " !"
+  fi
+}
+
+ref=$(git symbolic-ref HEAD 2> /dev/null | sed 's#refs/heads/##') || exit 0
+echo -n "${ref}$(parse_git_dirty)"

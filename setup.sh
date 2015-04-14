@@ -11,3 +11,6 @@ for f in ${to_link[@]}; do
   rm -rf $HOME/.$f
   ln -s ${ddir}/$f $HOME/.$f
 done
+
+mkdir -p $HOME/bin
+cp -a bin/* $HOME/bin/
