@@ -13,13 +13,14 @@
                       idle-highlight-mode
                       ido-ubiquitous
                       find-file-in-project
-                      magit
+                      ;magit
                       smex
                       scpaste
                       yaml-mode
                       yasnippet))
 
 (package-initialize)
+(package-refresh-contents)
 (dolist (p my-packages)
   (when (not (package-installed-p p))
     (package-install p)))
