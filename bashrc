@@ -1,3 +1,4 @@
+# -*- mode: sh -*-
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
@@ -46,14 +47,23 @@ else
 fi
 unset color_prompt force_color_prompt
 
+function title {
+    PROMPT_COMMAND="echo -ne \"\033]0;$1\007\""
+}
+
+function prt {
+    title $(basename $(pwd))
+}
+
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
 xterm*|rxvt*)
-    PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD/$HOME/~}\007"'
+    title "${PWD/$HOME/~}"
     ;;
 *)
     ;;
 esac
+
 
 # enable color support of ls and also add handy aliases
 if [ "$TERM" != "dumb" ] && [ -x /usr/bin/dircolors ]; then
@@ -86,3 +96,6 @@ fi
 if [ -e /usr/local/share/chruby/chruby.sh ]; then
   source /usr/local/share/chruby/chruby.sh
 fi
+
+### Added by the Heroku Toolbelt
+export PATH="/usr/local/heroku/bin:$PATH"
