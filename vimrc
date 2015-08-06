@@ -39,12 +39,12 @@ set guifont=Monospace\ 7
 set helplang=en
 set history=50
 set hlsearch
-set mouse=a
 set printoptions=paper:a4
 set ruler
 set runtimepath=~/.vim,/usr/share/vim/addons,/usr/share/vim/vimfiles,/usr/share/vim/vimcurrent,/usr/share/vim/vimfiles/after,/usr/share/vim/addons/after,~/.vim/after
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 set termencoding=utf-8
+set term=builtin_ansi
 set viminfo='20,\"50
 set tags=tags;
 set ts=2
@@ -52,10 +52,10 @@ set sw=2
 set tw=72
 set expandtab
 set nocompatible
-syntax on
 filetype on
 filetype plugin on
 filetype indent on
+syntax on
 nmap <silent> <F11> mzggVG!~/bin/xmpfilter.rb -a<cr>'z
 set incsearch
 set showmatch
