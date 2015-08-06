@@ -1,0 +1,6 @@
+# name: do |*args|
+# key: do|
+# --
+do |${args}|
+  $0
+end

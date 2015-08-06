@@ -1,0 +1,4 @@
+# name: { |*args| stuff }
+# key: {|
+# --
+{ |${*args}| $0 }

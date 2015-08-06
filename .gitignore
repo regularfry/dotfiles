@@ -1,5 +1,8 @@
 emacs.d/auto-save-list
 emacs.d/tramp
+emacs.d/places
+emacs.d/session.*
+emacs.d/ido.last
 vim/.netrwhist
 *~
 emacs.d/elpa/
