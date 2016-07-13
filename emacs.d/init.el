@@ -6,7 +6,7 @@
 
 (require 'package)
 (add-to-list 'package-archives
-  '("marmalade" .  "https://marmalade-repo.org/packages/"))
+             '("melpa-stable" . "https://stable.melpa.org/packages/") t)
 
 (defvar my-packages '(better-defaults
                       paredit
@@ -34,6 +34,10 @@
 (add-to-list 'auto-mode-alist '("\\.rake\\'" . ruby-mode))
 
 (add-to-list 'auto-mode-alist '("\\.gradle\\'" . groovy-mode))
+
+(add-to-list 'auto-mode-alist '("\\.jsx\\'" . jsx-mode))
+
+(setq scss-compile-at-save nil)
 
 ; C-? reverts the buffer.  Logic is that C-/ is undo, so C-S-/ is
 ; more-undo.
@@ -80,16 +84,19 @@
    '(default ((t (:inherit nil :stipple nil :background "gray12"
                   :foreground "green" :inverse-video nil :box nil :strike-through nil
                   :overline nil :underline nil :slant normal :weight normal :height
-                  100 :width normal :foundry "unknown" :family fontname))))
+                  140 :width normal :foundry "unknown" :family fontname))))
    '(minimap-font-face ((default (:height 20 :family "DejaVu Sans Mono")) (nil nil)))))
 
 (defun set-fixed-font ()  (interactive) (set-frame-font "Inconsolata 12"))
-(defun set-proportional-font ()  (interactive) (set-frame-font "Gentium 12"))
+(defun set-proportional-font ()  (interactive) (set-frame-font "Constantia 12"))
 
 (set-fixed-font)
 ;;(set-proportional-font)
 (global-set-key [f9] 'set-fixed-font)
 (global-set-key [f10] 'set-proportional-font)
+(global-set-key (kbd "C-+") (lambda () (interactive) (text-scale-increase 1)))
+(global-set-key (kbd "C--") (lambda () (interactive) (text-scale-decrease 1)))
+(global-set-key [end] 'move-end-of-line)
 
 ;;; Some basic navigation customizations.
 
@@ -156,3 +163,53 @@
 (require 'yasnippet)
 (add-hook 'ruby-mode-hook 'yas/minor-mode-on)
 (yas/reload-all)
+
+(defun my-paredit-nonlisp ()
+  "Turn on paredit mode for non-lisps."
+  (interactive)
+  (set (make-local-variable 'paredit-space-for-delimiter-predicates)
+       '((lambda (endp delimiter) nil)))
+  (paredit-mode 1))
+
+(defun new-journaled-file* (ext)
+  (let* ((dirname (expand-file-name "~/Documents/stash/"))
+         (filename (concat dirname (format-time-string "%Y-%m-%dT%H:%M:%S") ext)))
+    (find-file filename)))
+
+(defun new-journaled-file ()
+  "Make a new timestamped file under Documents/stash"
+  (interactive)
+  (new-journaled-file* ".txt"))
+
+(defun new-journaled-markdown ()
+  "Make a new timestamped markdown file under Documents/stash"
+  (interactive)
+  (new-journaled-file* ".md"))
+
+
+(global-set-key [f2] 'new-journaled-file)
+(global-set-key [f3] 'new-journaled-markdown)
+(global-set-key (kbd "M-t") 'new-journaled-file)
+
+(global-set-key (kbd "C-]") 'ffap)
+
+
+
+;; (require 'whitespace)
+;; (setq whitespace-style '(face empty tabs lines-tail trailing))
+;; (global-whitespace-mode t)
+
+;; (defun ay-slim-edit-as-javascript (start end)
+;;  (interactive "r")
+;;  (let ((orig-buf (current-buffer))
+;;        (buf (generate-new-buffer (generate-new-buffer-name "slim-js"))))
+;;    (copy-to-buffer buf start end)
+;;    (with-current-buffer buf
+;;      (js-mode)
+;;      (make-local-variable '*orig-start*)
+;;      (make-local-variable '*orig-end*)
+;;      (make-local-variable '*orig-buf*)
+;;      (setq *orig-start* start)
+;;      (setq *orig-end* end)
+;;      (setq *orig-buf* orig-buf))
+;;    (pop-to-buffer buf)))

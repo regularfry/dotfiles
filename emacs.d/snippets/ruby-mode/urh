@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: You are here
+# key: urh
+# --
+puts "#"*80
+puts ${1:"here"}
+puts "#"*80

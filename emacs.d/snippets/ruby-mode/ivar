@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: ivar
+# key: @
+# --
+@${1:var} = ${2:$1}$0
