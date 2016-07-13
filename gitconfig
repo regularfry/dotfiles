@@ -7,6 +7,8 @@
   co = checkout
   ci = commit
   ff = merge --ff-only
+  fo = fetch origin
+  fm = merge --ff-only origin/master
   st = status
   aa = add .
   undo = checkout --
@@ -23,3 +25,13 @@
 [github]
 	user = regularfry
 	oauth-token = 13ebec72c583a0fa1c691b7bf0dcb9ca189a0917
+[core]
+	excludesfile = /Users/ayo07/.gitignore_global
+[difftool "sourcetree"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	path = 
+[mergetool "sourcetree"]
+	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true
+[push]
+	default = simple

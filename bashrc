@@ -99,3 +99,20 @@ fi
 
 ### Added by the Heroku Toolbelt
 export PATH="/usr/local/heroku/bin:$PATH"
+
+# sensible.bash
+set -o noclobber
+shopt -s checkwinsize
+bind "set completion-ignore-case on"
+bind "set completion-map-case on"
+bind "set show-all-if-ambiguous on"
+shopt -s histappend
+shopt -s cmdhist
+PROMPT_COMMAND='history -a'
+HISTSIZE=500000
+HISTFILESUZE=100000
+#shopt -s dirspell
+shopt -s cdspell
+CDPATH="."
+#shopt -s cdable_vars
+
