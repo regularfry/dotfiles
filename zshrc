@@ -29,6 +29,3 @@ function pyactivate(){
   source $1/bin/activate
   export PATH=$1/bin:$PATH
 }
-
-# OPAM configuration
-. /home/alex/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true

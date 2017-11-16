@@ -9,6 +9,7 @@
              '("melpa-stable" . "https://stable.melpa.org/packages/") t)
 
 (defvar my-packages '(better-defaults
+                      exec-path-from-shell
                       paredit
                       idle-highlight-mode
                       ido-ubiquitous
@@ -37,13 +38,15 @@
 
 (add-to-list 'auto-mode-alist '("\\.jsx\\'" . jsx-mode))
 
+(setq ruby-insert-encoding-magic-comment nil)
+
 (setq scss-compile-at-save nil)
 
-; C-? reverts the buffer.  Logic is that C-/ is undo, so C-S-/ is
-; more-undo.
+                                        ; C-? reverts the buffer.  Logic is that C-/ is undo, so C-S-/ is
+                                        ; more-undo.
 (global-set-key (kbd "C-?") 'revert-buffer)
 
-; make f12 edit this file
+                                        ; make f12 edit this file
 (defun edit-init-el ()
   (interactive)
   (find-file "~/.emacs.d/init.el"))
@@ -59,7 +62,7 @@
       (next-multiframe-window)
       (switch-to-buffer bufb))))
 
-; Set C-pgup and C-pgdn to sane functions
+                                        ; Set C-pgup and C-pgdn to sane functions
 (global-set-key [C-next] 'next-multiframe-window)
 (global-set-key [C-prior] 'previous-multiframe-window)
 (global-set-key [C-S-prior] 'swap-buffer-windows)
@@ -69,7 +72,11 @@
 (global-set-key [?\C-<] 'decrease-left-margin)
 
 
-; Handy binding
+;; org-mode
+(setq org-agenda-files (list "~/Documents/todo.org"))
+(global-set-key (kbd "C-c A") 'org-agenda)
+
+                                        ; Handy binding
 (global-set-key (kbd "C-c a =")
                 (lambda () (interactive)
                   (align-regexp (region-beginning) (region-end) "\\(\\s-*\\)=" 1 1 nil)))
@@ -77,14 +84,14 @@
 
 (defun set-font (fontname)
   (custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
+   ;; custom-set-faces was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
    '(default ((t (:inherit nil :stipple nil :background "gray12"
-                  :foreground "green" :inverse-video nil :box nil :strike-through nil
-                  :overline nil :underline nil :slant normal :weight normal :height
-                  140 :width normal :foundry "unknown" :family fontname))))
+                           :foreground "green" :inverse-video nil :box nil :strike-through nil
+                           :overline nil :underline nil :slant normal :weight normal :height
+                           140 :width normal :foundry "unknown" :family fontname))))
    '(minimap-font-face ((default (:height 20 :family "DejaVu Sans Mono")) (nil nil)))))
 
 (defun set-fixed-font ()  (interactive) (set-frame-font "Inconsolata 12"))
@@ -100,7 +107,7 @@
 
 ;;; Some basic navigation customizations.
 
-(setq line-move-visual nil)             ; Default to logical line movement
+(setq line-move-visual t) ; makes Ctrl-n/Ctrl-p the same as up-arrow/down-arrow
 
 ;;; The following function are like previous-line/next-line, but move
 ;;; visually (and do so without changing the default behaviour).
@@ -160,9 +167,24 @@
 (global-set-key (kbd "M-p") 'move-region-up)
 
 
+(defun split-comma-lines (start end)
+  (interactive "r")
+  (save-excursion
+    (goto-char start)
+    (while (search-forward "," end t)
+      (replace-match ",\n" nil t))
+    (indent-region start end)))
+
 (require 'yasnippet)
-(add-hook 'ruby-mode-hook 'yas/minor-mode-on)
-(yas/reload-all)
+(add-hook 'ruby-mode-hook
+          (function (lambda ()
+                      (yas/minor-mode-on)
+                      (ruby-tools-mode)
+                      (rubocop-mode))))
+(add-hook 'js-mode-hook
+          (function (lambda ()
+                      (yas/minor-mode-on)))
+          (yas/reload-all))
 
 (defun my-paredit-nonlisp ()
   "Turn on paredit mode for non-lisps."
@@ -186,13 +208,68 @@
   (interactive)
   (new-journaled-file* ".md"))
 
+(defun new-org-mode-buffer ()
+  "Make a new org-mode buffer"
+  (interactive)
+  (switch-to-buffer (generate-new-buffer "org"))
+  (org-mode))
+
+(defun toggle-macro ()
+  (interactive)
+  (if (or defining-kbd-macro executing-kbd-macro)
+      (kmacro-end-macro 0)
+    (kmacro-start-macro 0)))
+
 
 (global-set-key [f2] 'new-journaled-file)
 (global-set-key [f3] 'new-journaled-markdown)
+(global-set-key [f4] 'new-org-mode-buffer)
+(global-set-key [f6] 'toggle-macro)
+(global-set-key [f7] 'kmacro-call-macro)
 (global-set-key (kbd "M-t") 'new-journaled-file)
 
 (global-set-key (kbd "C-]") 'ffap)
 
+(global-set-key [f7] 'magit-status)
+
+(defvar-local highlight-region--highlighted-text "")
+
+(define-minor-mode highlight-region-mode
+  "Automatically highlight current region when mark is active."
+  nil nil nil
+  (highlight-region--unhighlight-region)
+  (remove-hook 'activate-mark-hook #'highlight-region--highlight-region t)
+  ;; as for GNU Emacs 25.0.93.1 (i686-pc-linux-gnu, X toolkit, Xaw scroll bars) of 2016-05-03
+  ;; it seems that the following behaviour of activate-mark-hook described in its dosctring :
+  ;; >> It is also run at the end of a command, if the mark is active and
+  ;; >> it is possible that the region may have changed.
+  ;; actually doesn't work. Thus let's add ourselves to post-command-hook...
+  (remove-hook 'post-command-hook #'highlight-region--highlight-region t)
+  (remove-hook 'deactivate-mark-hook #'highlight-region--unhighlight-region t)
+  (when highlight-region-mode
+    (add-hook 'activate-mark-hook #'highlight-region--highlight-region nil t)
+    (add-hook 'post-command-hook #'highlight-region--highlight-region nil t)
+    (add-hook 'deactivate-mark-hook #'highlight-region--unhighlight-region nil t)))
+
+(defun highlight-region--highlight-region ()
+  "Highlight currently active region"
+  (when (use-region-p)
+    (let ((str (buffer-substring-no-properties (region-beginning) (region-end))))
+      (unless (or (string= "" str)
+                  (string= str highlight-region--highlighted-text))
+        (highlight-region--unhighlight-region)
+        (setq highlight-region--highlighted-text str)
+        ;; TODO: add a face `highlight-region' and use it.
+        (highlight-regexp (regexp-quote str))))))
+
+(defun highlight-region--unhighlight-region nil
+  (unhighlight-regexp (regexp-quote highlight-region--highlighted-text))
+  (setq highlight-region--highlighted-text ""))
+
+
+(defun +x ()
+  (interactive)
+  (chmod buffer-file-name #o755))
 
 
 ;; (require 'whitespace)
@@ -213,3 +290,30 @@
 ;;      (setq *orig-end* end)
 ;;      (setq *orig-buf* orig-buf))
 ;;    (pop-to-buffer buf)))
+
+(exec-path-from-shell-initialize)
+
+(add-to-list 'load-path "~/.emacs.d/other/vagrant-tramp")
+(require 'vagrant-tramp)
+
+(add-to-list 'load-path "~/.emacs.d/other")
+(require 'rubocop)
+(put 'downcase-region 'disabled nil)
+
+(setq cider-cljs-lein-repl "(do (use 'figwheel-sidecar.repl-api) (start-figwheel!) (cljs-repl))")
+
+(require 'dired-x)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (haml-mode feature-mode zencoding-mode yasnippet yaml-mode smex slim-mode scss-mode scpaste ruby-tools request php-mode paredit markdown-mode magit logito livescript-mode jsx-mode ido-ubiquitous idle-highlight-mode haskell-mode go-mode flymake-ruby find-file-in-project exec-path-from-shell elm-mode dumb-jump dash-functional cider better-defaults alchemist))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

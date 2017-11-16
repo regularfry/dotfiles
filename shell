@@ -9,7 +9,7 @@ alias trails="ruby -I.:lib:test -rpp -rubygems"
 alias openvpn="sudo /etc/init.d/openvpn"
 alias be="bundle exec"
 alias ebe="env/bin/exec"
-alias +x="chmod +x"
+#alias +x="chmod +x"
 alias e="emacsclient -n"
 
 mcd () {
@@ -30,14 +30,14 @@ cdp (){
 }
 vg (){
   proj=$1
-  shift
   if [ -z "$proj" ]; then
-    vagrant ssh
+    shift
+    vagrant up; vagrant ssh
   else
     if [ -z "$2" ]; then
-      cdp $proj && vagrant ssh
+      cdp $proj && (vagrant up; vagrant ssh)
     else
-      cdp $proj && vagrant ssh -c "$*"
+      cdp $proj && (vagrant up; vagrant ssh -c "$*")
     fi
   fi
 }
@@ -53,7 +53,6 @@ if [ -e $SSH_AUTH_SOCK ]; then
     ssh-add
   fi
 fi
-
 if [ -z "${GOPATH}" ]; then
   export GOPATH=$HOME/go
 fi
@@ -61,8 +60,16 @@ export GOPATHS=$GOPATH/bin
 export PATH=/usr/local/bin:$PATH
 export PATH=$CHICKEN_BIN:$HOME/bin:$GOPATHS:$CABAL_BIN:$PATH
 export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/latest/bin
+export PATH=$PATH:$HOME/.yarn/bin
 export DEBEMAIL=alex@blackkettle.org
 export DEBFULLNAME="Alex Young"
+export GITHUB_USERNAME=regularfry
+#export GITHUB_ADMIN_OAUTH="615ae7812851c24d5ffb4e79d16bbbbfafda4e0b"
+# This is the `Sky repo only` key
+export GITHUB_ADMIN_OAUTH="b6b618584e46025d3d9305f08a6fcb7b747ed7c6"
+export GITHUB_STATS_OAUTH="d24ac8fd92536b8f8fd5f092a5a37b0959c4098e"
+# export PRIVATE_GEM_OAUTH="7b16c8d5113d1d7257c4292b0c34090f409b6f01"
+export PRIVATE_GEM_OAUTH=$GITHUB_ADMIN_OAUTH
 
 cf-dev (){
   export CF_HOME=~/.cf/dev
@@ -85,13 +92,17 @@ cf-prod () {
 #cf-prod
 
 
-if [ -f /usr/local/share/chruby/chruby.sh ]; then
-  source /usr/local/share/chruby/chruby.sh
-fi
-
 # OPAM configuration
 . /home/zander/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
 
 # NVM config
 export NVM_DIR=~/.nvm
-source $(brew --prefix nvm)/nvm.sh
+nvm() {
+  source $(brew --prefix nvm)/nvm.sh
+  nvm $@
+}
+
+export PATH=$PATH:node_modules/.bin
+if [ -f /usr/local/share/chruby/chruby.sh ]; then
+  source /usr/local/share/chruby/chruby.sh
+fi

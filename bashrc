@@ -84,17 +84,8 @@ alias sync_ssh='export SSH_AUTH_SOCK=`cat ~/.ssh_auth_sock`'
 if [ -f /etc/bash_completion ]; then
     . /etc/bash_completion
 fi
-
 if [ -f $HOME/.shell ]; then
   source $HOME/.shell
-fi
-
-if [ -e /usr/share/chruby/chruby.sh ]; then
-  source /usr/share/chruby/chruby.sh
-fi
-
-if [ -e /usr/local/share/chruby/chruby.sh ]; then
-  source /usr/local/share/chruby/chruby.sh
 fi
 
 ### Added by the Heroku Toolbelt
@@ -115,4 +106,5 @@ HISTFILESUZE=100000
 shopt -s cdspell
 CDPATH="."
 #shopt -s cdable_vars
+
 
