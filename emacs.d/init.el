@@ -18,14 +18,16 @@
                       smex
                       scpaste
                       yaml-mode
-                      yasnippet))
+                      yasnippet
+                      js2-mode
+                      js2-refactor
+                      xref-js2))
 
 (package-initialize)
 (package-refresh-contents)
 (dolist (p my-packages)
   (when (not (package-installed-p p))
     (package-install p)))
-
 
 ;; filename matching
 (add-to-list 'auto-mode-alist '("[rR]akefile\\'" . ruby-mode))
@@ -36,11 +38,24 @@
 
 (add-to-list 'auto-mode-alist '("\\.gradle\\'" . groovy-mode))
 
-(add-to-list 'auto-mode-alist '("\\.jsx\\'" . jsx-mode))
+(add-to-list 'auto-mode-alist '("\\.jsx\\'" . rjsx-mode))
+(require 'js2-mode)
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+
+;; Better imenu
+(add-hook 'js2-mode-hook #'js2-imenu-extras-mode)
+
+(require 'js2-refactor)
+(add-hook 'js2-mode-hook #'js2-refactor-mode)
+
+(js2r-add-keybindings-with-prefix "C-c C-m")
 
 (setq ruby-insert-encoding-magic-comment nil)
 
 (setq scss-compile-at-save nil)
+(hl-line-mode)
+
+(setq visual-line-fringe-indicators '(left-curly-arrow right-curly-arrow))
 
                                         ; C-? reverts the buffer.  Logic is that C-/ is undo, so C-S-/ is
                                         ; more-undo.
@@ -50,6 +65,10 @@
 (defun edit-init-el ()
   (interactive)
   (find-file "~/.emacs.d/init.el"))
+(defun edit-session-org ()
+  (interactive)
+  (find-file "~/session.org"))
+(global-set-key [f11] 'edit-session-org)
 (global-set-key [f12] 'edit-init-el)
 
 (defun swap-buffer-windows ()
@@ -62,7 +81,7 @@
       (next-multiframe-window)
       (switch-to-buffer bufb))))
 
-                                        ; Set C-pgup and C-pgdn to sane functions
+; Set C-pgup and C-pgdn to sane functions
 (global-set-key [C-next] 'next-multiframe-window)
 (global-set-key [C-prior] 'previous-multiframe-window)
 (global-set-key [C-S-prior] 'swap-buffer-windows)
@@ -71,6 +90,25 @@
 (global-set-key [?\C->] 'increase-left-margin)
 (global-set-key [?\C-<] 'decrease-left-margin)
 
+(defun print-file-name ()
+  (interactive)
+  (princ (buffer-file-name)))
+
+(defun top-join-line ()
+  "Join the current line with the line beneath it."
+  (interactive)
+  (delete-indentation 1))
+
+(global-set-key (kbd "C-^") 'top-join-line)
+
+;; Fix alt-3 to type a with right alt only
+(setq ns-right-alternate-modifier (quote none))
+
+;; markdown-mode
+(defun acy-markdown-export-and-open ()
+  (interactive)
+  (shell-command (concat "open " (markdown-export))))
+;(define-key markdown-mode-map [f5] 'acy-markdown-export-and-open)
 
 ;; org-mode
 (setq org-agenda-files (list "~/Documents/todo.org"))
@@ -91,11 +129,11 @@
    '(default ((t (:inherit nil :stipple nil :background "gray12"
                            :foreground "green" :inverse-video nil :box nil :strike-through nil
                            :overline nil :underline nil :slant normal :weight normal :height
-                           140 :width normal :foundry "unknown" :family fontname))))
+                           180 :width normal :foundry "unknown" :family fontname))))
    '(minimap-font-face ((default (:height 20 :family "DejaVu Sans Mono")) (nil nil)))))
 
-(defun set-fixed-font ()  (interactive) (set-frame-font "Inconsolata 12"))
-(defun set-proportional-font ()  (interactive) (set-frame-font "Constantia 12"))
+(defun set-fixed-font ()  (interactive) (set-frame-font "Inconsolata 18"))
+(defun set-proportional-font ()  (interactive) (set-frame-font "Constantia 18"))
 
 (set-fixed-font)
 ;;(set-proportional-font)
@@ -107,6 +145,7 @@
 
 ;;; Some basic navigation customizations.
 
+(linum-mode)
 (setq line-move-visual t) ; makes Ctrl-n/Ctrl-p the same as up-arrow/down-arrow
 
 ;;; The following function are like previous-line/next-line, but move
@@ -193,10 +232,19 @@
        '((lambda (endp delimiter) nil)))
   (paredit-mode 1))
 
+(defun datestamp () (format-time-string "%Y-%m-%d"))
+
 (defun new-journaled-file* (ext)
   (let* ((dirname (expand-file-name "~/Documents/stash/"))
          (filename (concat dirname (format-time-string "%Y-%m-%dT%H:%M:%S") ext)))
     (find-file filename)))
+
+(defun new-todo-org (name)
+  (interactive "sTodo name: ")
+  (let* ((dirname (expand-file-name "~/OneDrive - Sky/Documents/Todo/"))
+         (filename (concat dirname (datestamp) "-" name ".org")))
+    (find-file filename)))
+
 
 (defun new-journaled-file ()
   "Make a new timestamped file under Documents/stash"
@@ -207,6 +255,11 @@
   "Make a new timestamped markdown file under Documents/stash"
   (interactive)
   (new-journaled-file* ".md"))
+
+(defun new-journaled-org ()
+  "Make a new timestamped org-mode file under Documents/stash"
+  (interactive)
+  (new-journaled-file* ".org"))
 
 (defun new-org-mode-buffer ()
   "Make a new org-mode buffer"
@@ -220,17 +273,23 @@
       (kmacro-end-macro 0)
     (kmacro-start-macro 0)))
 
+(defun save-and-kill-current-buffer ()
+  (interactive)
+  (save-buffer)
+  (kill-buffer))
 
 (global-set-key [f2] 'new-journaled-file)
 (global-set-key [f3] 'new-journaled-markdown)
-(global-set-key [f4] 'new-org-mode-buffer)
-(global-set-key [f6] 'toggle-macro)
+(global-set-key [f4] 'new-journaled-org)
+(global-set-key [f5] 'new-todo-org)
+(global-set-key [f6] 'save-and-kill-current-buffer)
 (global-set-key [f7] 'kmacro-call-macro)
 (global-set-key (kbd "M-t") 'new-journaled-file)
 
 (global-set-key (kbd "C-]") 'ffap)
+;;(global-set-key (kbd "C-^") 'smerge-keep-current)
 
-(global-set-key [f7] 'magit-status)
+(global-set-key [f8] 'magit-status)
 
 (defvar-local highlight-region--highlighted-text "")
 
@@ -302,15 +361,23 @@
 
 (setq cider-cljs-lein-repl "(do (use 'figwheel-sidecar.repl-api) (start-figwheel!) (cljs-repl))")
 
+(require 'desktop+)
+(desktop+-load-auto)
+
 (require 'dired-x)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   (quote
+    ("bfdcbf0d33f3376a956707e746d10f3ef2d8d9caa1c214361c9c08f00a1c8409" default)))
+ '(markdown-command
+   "pandoc -c file:///Users/ayo07/.emacs.d/github-pandoc.css --from gfm -t html5 --mathjax --highlight-style pygments --standalone --quiet")
  '(package-selected-packages
    (quote
-    (haml-mode feature-mode zencoding-mode yasnippet yaml-mode smex slim-mode scss-mode scpaste ruby-tools request php-mode paredit markdown-mode magit logito livescript-mode jsx-mode ido-ubiquitous idle-highlight-mode haskell-mode go-mode flymake-ruby find-file-in-project exec-path-from-shell elm-mode dumb-jump dash-functional cider better-defaults alchemist))))
+    (typescript-mode reason-mode rjsx-mode darcula-theme desktop+ js2-mode js2-refactor xref-js2 csv-mode zenburn-theme elfeed excorporate markdown-toc haml-mode feature-mode zencoding-mode yasnippet yaml-mode smex slim-mode scss-mode scpaste ruby-tools request php-mode paredit markdown-mode magit logito livescript-mode jsx-mode ido-ubiquitous idle-highlight-mode haskell-mode go-mode flymake-ruby find-file-in-project exec-path-from-shell elm-mode dumb-jump dash-functional cider better-defaults alchemist))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
