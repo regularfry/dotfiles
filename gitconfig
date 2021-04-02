@@ -14,3 +14,4 @@
   dif = diff
   di = diff
   d = diff
+  staged = diff --staged 
