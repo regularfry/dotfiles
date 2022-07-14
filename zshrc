@@ -23,6 +23,7 @@ plugins=(git)
 source $ZSH/oh-my-zsh.sh
 
 setopt clobber
+unsetopt correct_all
 source $HOME/.shell
 
 function pyactivate(){
@@ -30,5 +31,13 @@ function pyactivate(){
   export PATH=$1/bin:$PATH
 }
 
-# OPAM configuration
-. /home/alex/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
+alias ec="emacsclient -n"
+
+function resource(){
+  source ~/.zshrc
+}
+
+source /usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc
+export PATH="/usr/local/opt/openjdk/bin:$PATH"
+
+eval "$(pyenv init -)"

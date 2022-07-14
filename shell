@@ -1,15 +1,16 @@
+# -*- mode: sh -*-
 export LC_CTYPE=en_GB.UTF-8
 export LANG=en_GB.UTF-8
 
 alias screen='echo $SSH_AUTH_SOCK > ~/.ssh_auth_sock && screen'
 alias sync_ssh='export SSH_AUTH_SOCK=`cat ~/.ssh_auth_sock`'
-alias ec="emacsclient -n"
 alias rtest="ruby -I.:lib:test:tests/unit -rpp -rubygems"
 alias trails="ruby -I.:lib:test -rpp -rubygems"
 alias openvpn="sudo /etc/init.d/openvpn"
 alias be="bundle exec"
 alias ebe="env/bin/exec"
-
+#alias +x="chmod +x"
+alias e="emacsclient -n"
 
 mcd () {
   dirname=$1
@@ -21,34 +22,142 @@ mcd () {
   fi
 }
 
+gcd (){
+  cd $(git rev-parse --show-toplevel)/$1
+}
+cdp (){
+  cd ~/projects/help/$1
+}
+vg (){
+  proj=$1
+  if [ -z "$proj" ]; then
+    shift
+    vagrant up; vagrant ssh
+  else
+    if [ -z "$2" ]; then
+      cdp $proj && (vagrant up; vagrant ssh)
+    else
+      cdp $proj && (vagrant up; vagrant ssh -c "$*")
+    fi
+  fi
+}
+
+
+# sp-shop functions
+rebuild() {
+  nvm use &&
+    npx lerna clean --yes &&
+    rm -Rf node_modules yarn.lock &&
+    yarn install --ignore-engines &&
+    NODE_ENV=development yarn build
+}
+
+yt() { yarn test --verbose --no-coverage $@; }
+ytw() { yt --watch $@; }
+
+
+
 export EDITOR=vim
 
 export CHICKEN_BIN=$HOME/.chicken/bin
 export CABAL_BIN=$HOME/.cabal/bin
-
-export PATH=$CLJR_BIN:$CHICKEN_BIN:$HOME/bin:$CABAL_BIN:$PATH
 
 if [ -e $SSH_AUTH_SOCK ]; then
   if ! ssh-add -L > /dev/null; then
     ssh-add
   fi
 fi
-
 if [ -z "${GOPATH}" ]; then
   export GOPATH=$HOME/go
 fi
-if [ -z "${GOROOT}" ]; then
-  export GOROOT=/usr/local/go
-fi
-export GOPATHS=$GOPATH/bin:$GOROOT/bin
-export PATH=$CHICKEN_BIN:$HOME/bin:$GOPATHS:$PATH
+export GOPATHS=$GOPATH/bin
+export PATH=$PATH:/usr/local/bin
+export PATH=$CHICKEN_BIN:$HOME/bin:$GOPATHS:$CABAL_BIN:$PATH
+export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/latest/bin
+export PATH=$PATH:$HOME/.yarn/bin
 export DEBEMAIL=alex@blackkettle.org
 export DEBFULLNAME="Alex Young"
+export GITHUB_USERNAME=regularfry
 
+cf-dev (){
+  export CF_HOME=~/.cf/dev
+  cf api api.cf.dev-paas.bskyb.com --skip-ssl-validation
+  cf login
+}
 
-if [ -f /usr/local/share/chruby/chruby.sh ]; then
-  source /usr/local/share/chruby/chruby.sh
-fi
+cf-stage (){
+  export CF_HOME=~/.cf/stage
+  cf api api.cf.stage-paas.bskyb.com --skip-ssl-validation
+  cf login
+}
+
+cf-prod () {
+  export CF_HOME=~/.cf/prod
+  export CF_PLUGIN_HOME=~/
+  cf api api.cf.paas.bskyb.com --skip-ssl-validation
+  cf login
+}
+
+#cf-prod
+source-env(){
+    filename=$1
+    if [ -z $filename ]; then
+        echo "Need a filename" >&2
+    else
+        set -a
+        . $filename
+        set +a
+    fi
+}
+
 
 # OPAM configuration
-. /home/zander/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
+# . /home/zander/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
+
+# NVM config
+export NVM_DIR=~/.nvm
+nvm_is_loaded() {
+    type -v nvm &> /dev/null
+}
+
+load_nvm() {
+    # NVM_PREFIX is found with brew --prefix nvm
+    NVM_PREFIX=/usr/local/opt/nvm
+    source $NVM_PREFIX/nvm.sh
+}
+
+nvm() {
+  nvm_is_loaded || load_nvm
+  nvm "$@"
+}
+
+nv() {
+    ~/bin/nvmsh "$@"
+}
+
+fail() {
+    echo "$@" >&2
+    exit 1
+}
+
+export PATH=$PATH:node_modules/.bin
+chruby() {
+  if [ -f /usr/local/share/chruby/chruby.sh ]; then
+    source /usr/local/share/chruby/chruby.sh
+    chruby $@
+  fi
+}
+
+if [ -f $HOME/dotfiles/git-completion.bash ]; then
+  source $HOME/dotfiles/git-completion.bash
+fi
+export PATH="/usr/local/opt/tomcat@7/bin:$PATH"
+export PATH="$PATH:$HOME/src/depot_tools"
+
+alias switchcorenonprod="gcloud container clusters get-credentials oceanus-core-nonprod --project oceanus-core-nonprod --region europe-west2"
+alias switchdev="gcloud container clusters get-credentials oceanus-dev --project gdp-oceanus-dev --region europe-west2"
+alias switchuat="gcloud container clusters get-credentials oceanus-uat --project oceanus-uat --region europe-west2"
+alias switchstage="gcloud container clusters get-credentials oceanus-stage --project oceanus-stage --region europe-west2"
+alias switchcoreprod="gcloud container clusters get-credentials oceanus-core-prod --region europe-west2 --project oceanus-core-prod"
+alias switchproda="gcloud container clusters get-credentials oceanus-prod-a --region europe-west2 --project oceanus-prod"
+alias switchprodb="gcloud container clusters get-credentials oceanus-prod-b --region europe-west2 --project oceanus-prod"

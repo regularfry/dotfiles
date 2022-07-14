@@ -1,3 +1,5 @@
+(menu-bar-mode -1)
+(tool-bar-mode -1)
 (defalias 'yes-or-no-p 'y-or-n-p)
 (setq inhibit-startup-message t)
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -5,13 +7,14 @@
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 (require 'package)
+;; (add-to-list 'package-archives
+;;   '("marmalade" .  "https://marmalade-repo.org/packages/"))
 (add-to-list 'package-archives
-  '("marmalade" .  "https://marmalade-repo.org/packages/"))
-
+	     '("melpa" . "https://melpa.org/packages/") t)
 (defvar my-packages '(better-defaults
                       paredit
                       idle-highlight-mode
-                      ido-ubiquitous
+                      ;ido-ubiquitous
                       find-file-in-project
                       ;magit
                       smex
@@ -24,6 +27,13 @@
 (dolist (p my-packages)
   (when (not (package-installed-p p))
     (package-install p)))
+
+(defun top-join-line ()
+  "Join the current line with the line beneath it."
+  (interactive)
+  (delete-indentation 1))
+
+(global-set-key (kbd "C-^") 'top-join-line)
 
 
 ;; filename matching
@@ -39,11 +49,14 @@
 ; more-undo.
 (global-set-key (kbd "C-?") 'revert-buffer)
 
-; make f12 edit this file
+;;; make f12 edit this file
 (defun edit-init-el ()
   (interactive)
   (find-file "~/.emacs.d/init.el"))
 (global-set-key [f12] 'edit-init-el)
+(global-set-key [f11] (lambda () (interactive)
+			(find-file "~/OneDrive - Sky/session.org")))
+
 
 (defun swap-buffer-windows ()
   (interactive)
@@ -84,7 +97,7 @@
    '(minimap-font-face ((default (:height 20 :family "DejaVu Sans Mono")) (nil nil)))))
 
 (defun set-fixed-font ()  (interactive) (set-frame-font "Inconsolata 12"))
-(defun set-proportional-font ()  (interactive) (set-frame-font "Gentium 12"))
+(defun set-proportional-font ()  (interactive) (set-frame-font "Gentium Basic 12"))
 
 (set-fixed-font)
 ;;(set-proportional-font)
@@ -153,6 +166,21 @@
 (global-set-key (kbd "M-p") 'move-region-up)
 
 
+(setq inferior-lisp-program "/usr/local/bin/sbcl")
+
 (require 'yasnippet)
 (add-hook 'ruby-mode-hook 'yas/minor-mode-on)
 (yas/reload-all)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(clojure-mode clojure-mode-extra-font-locking ob-http sly sly-asdf markdown-mode markdown-preview-mode helm helm-directory helm-file-preview php-mode php-refactor-mode yasnippet yaml-mode smex scpaste paredit idle-highlight-mode find-file-in-project better-defaults)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

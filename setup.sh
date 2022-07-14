@@ -3,7 +3,7 @@
 set -e
 set -u
 
-ddir=$(dirname $(realpath $0))
+ddir=$PWD
 
 to_link=(bashrc emacs.d gitconfig hgrc oh-my-zsh screenrc vim vimrc zshrc shell)
 for f in ${to_link[@]}; do
